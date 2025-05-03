@@ -6,6 +6,48 @@ export default function TrikaftaChecker() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
+  const [forceSubmit, setForceSubmit] = useState(false);
+
+  const handleSubmit = (val) => {
+    const cleaned = val.trim().toUpperCase();
+    const matchedKey = Object.keys(mutationData).find(
+      key =>
+        key.toUpperCase() === cleaned ||
+        mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned)
+    );
+
+    if (matchedKey) {
+      const data = mutationData[matchedKey];
+      const isEligible = data.all_aliases.some(alias => eligibleMutations.has(alias));
+      setResult({
+        official_name: data.official_name,
+        all_aliases: data.all_aliases,
+        eligible: isEligible
+      });
+      setSuggestions([]);
+    } else {
+      setResult(null);
+      if (cleaned.length >= 1) {
+        const matches = allMutationNames.filter(name =>
+          name.includes(cleaned)
+        ).slice(0, 5);
+        setSuggestions(matches);
+      } else {
+        setSuggestions([]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (input || forceSubmit) {
+      handleSubmit(input);
+      setForceSubmit(false);
+    }
+  }, [input, forceSubmit]);
+
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     const cleaned = input.trim().toUpperCase();
@@ -26,7 +68,7 @@ export default function TrikaftaChecker() {
       setSuggestions([]);
     } else {
       setResult(null);
-      if (cleaned.length > 1) {
+      if (cleaned.length >= 1) {
         const matches = allMutationNames.filter(name =>
           name.includes(cleaned)
         ).slice(0, 5);
@@ -44,6 +86,7 @@ export default function TrikaftaChecker() {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter") setForceSubmit(true); }}
         placeholder="Enter CFTR mutation (e.g., F508del)"
         className="w-full p-2 border border-gray-300 rounded mb-4"
       />
@@ -63,7 +106,7 @@ export default function TrikaftaChecker() {
             {suggestions.map((s, i) => (
               <li key={i}>
                 <button
-                  onClick={() => setInput(s)}
+                  onClick={() => { setInput(s); setForceSubmit(true); }}
                   className="text-blue-600 underline"
                 >
                   {s}
