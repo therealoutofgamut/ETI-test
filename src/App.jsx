@@ -16,6 +16,15 @@ const eligibleMutations = new Set([
 import { saveAs } from "file-saver";
 
 export default function TrikaftaChecker() {
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem("darkMode");
+    if (stored !== null) return JSON.parse(stored);
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", JSON.stringify(isDark));
+  }, [isDark]);
   const [history, setHistory] = useState([]);
 
   const [input, setInput] = useState("");
@@ -84,9 +93,14 @@ export default function TrikaftaChecker() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 dark:text-white rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-6">Trikafta Mutation Checker</h1>
-      <input className="transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400"
+    {`max-w-xl mx-auto mt-10 p-6 ${isDark ? "bg-gray-900 text-white border-gray-700" : "bg-white text-black border-gray-200"}`} bg-white dark:bg-gray-900 dark:text-white rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <h1 className={`text-3xl font-bold text-center ${isDark ? "text-blue-300" : "text-blue-700"} mb-6`}>Trikafta Mutation Checker</h1>
+        <div className="text-right mb-2">
+          <button onClick={() => setIsDark(!isDark)} className="text-sm px-3 py-1 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600">
+            Toggle {isDark ? "Light" : "Dark"} Mode
+          </button>
+        </div>
+      <input className={`transition ${isDark ? "bg-gray-800 border-gray-600 placeholder-gray-400 text-white" : ""}`} focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400"
         type="text"
         value={input}
         onChange={handleInputChange}
@@ -150,6 +164,14 @@ export default function TrikaftaChecker() {
           </table>
           <button
             onClick={() => {
+              const csvContent = "data:text/csv;charset=utf-8," +
+                "Mutation,Official Name,Eligibility\\n" +
+                history.map(h =>
+                  [h.query, h.official_name, h.eligible ? "Eligible" : "Not eligible"].join(",")
+                ).join("\\n");
+              const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+              saveAs(blob, "trikafta_lookup_history.csv");
+            }}
               const csvContent = "data:text/csv;charset=utf-8," +
                 "Mutation,Official Name,Eligibility\n" +
                 history.map(h =>
