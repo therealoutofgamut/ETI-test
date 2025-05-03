@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const eligibleMutations = new Set(["F508del", "G551D", "Q552P"]);
+const eligibleMutations = new Set(["F508del", "G551D", "Q552P"].map(m => m.toUpperCase()));
 
 const mutationData = {
   F508del: {
