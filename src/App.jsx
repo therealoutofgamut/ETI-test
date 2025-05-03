@@ -18,8 +18,14 @@ export default function TrikaftaChecker() {
   const [suggestions, setSuggestions] = useState([]);
 
   const performLookup = (query) => {
+    console.log("🔍 Lookup triggered for:", query);
     const cleaned = query.trim().toUpperCase();
     const matchedKey = Object.keys(mutationData).find(
+    key => {
+      const match = key.toUpperCase() === cleaned || mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned);
+      if (match) console.log("✅ Match found for:", key);
+      return match;
+    }
       key =>
         key.toUpperCase() === cleaned ||
         mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned)
@@ -28,6 +34,7 @@ export default function TrikaftaChecker() {
     if (matchedKey) {
       const data = mutationData[matchedKey];
       const isEligible = data.all_aliases.some(alias => eligibleMutations.has(alias));
+      console.log("🎯 Lookup result: Eligible =", isEligible);
       setResult({
         official_name: data.official_name,
         all_aliases: data.all_aliases,
