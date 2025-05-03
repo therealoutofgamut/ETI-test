@@ -20,19 +20,18 @@ export default function TrikaftaChecker() {
   const performLookup = (query) => {
     console.log("🔍 Lookup triggered for:", query);
     const cleaned = query.trim().toUpperCase();
+
     let matchedKey = null;
     for (const key of Object.keys(mutationData)) {
-      const match = key.toUpperCase() === cleaned || mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned);
+      const match =
+        key.toUpperCase() === cleaned ||
+        mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned);
       if (match) {
         console.log("✅ Match found for:", key);
         matchedKey = key;
         break;
       }
     }
-      key =>
-        key.toUpperCase() === cleaned ||
-        mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned)
-    );
 
     if (matchedKey) {
       const data = mutationData[matchedKey];
@@ -47,7 +46,6 @@ export default function TrikaftaChecker() {
       setResult(null);
     }
 
-    // Suggestion update
     if (!matchedKey && cleaned.length > 0) {
       const matches = allMutationNames.filter(name =>
         name.includes(cleaned)
