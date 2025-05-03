@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { mutationData } from "./mutationData";
+import { mutationData } from "./mutationData.js";
 
 const eligibleMutations = new Set([
   "D1152H", "L206W", "R1066H", "S945L", "F508del", "L997F", "R117C", "T338I", "G85E",
