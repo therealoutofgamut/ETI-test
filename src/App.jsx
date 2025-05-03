@@ -90,8 +90,8 @@ export default function TrikaftaChecker() {
               <li key={i}>
                 <button
                   onClick={() => {
-                    setInput(s);
                     performLookup(s);
+                    setInput(s);
                   }}
                   className="text-blue-600 underline"
                 >
