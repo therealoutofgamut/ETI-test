@@ -14,12 +14,11 @@ const eligibleMutations = new Set([
 
 export default function TrikaftaChecker() {
   const [input, setInput] = useState("");
-  const [submittedValue, setSubmittedValue] = useState("");
   const [result, setResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
 
-  const handleSubmit = (val) => {
-    const cleaned = val.trim().toUpperCase();
+  const performLookup = (query) => {
+    const cleaned = query.trim().toUpperCase();
     const matchedKey = Object.keys(mutationData).find(
       key =>
         key.toUpperCase() === cleaned ||
@@ -34,23 +33,24 @@ export default function TrikaftaChecker() {
         all_aliases: data.all_aliases,
         eligible: isEligible
       });
-      setSuggestions([]);
     } else {
       setResult(null);
-      if (cleaned.length >= 1) {
-        const matches = allMutationNames.filter(name =>
-          name.includes(cleaned)
-        ).slice(0, 5);
-        setSuggestions(matches);
-      } else {
-        setSuggestions([]);
-      }
+    }
+
+    // Suggestion update
+    if (!matchedKey && cleaned.length > 0) {
+      const matches = allMutationNames.filter(name =>
+        name.includes(cleaned)
+      ).slice(0, 5);
+      setSuggestions(matches);
+    } else {
+      setSuggestions([]);
     }
   };
 
   useEffect(() => {
-    if (submittedValue) handleSubmit(submittedValue);
-  }, [submittedValue]);
+    performLookup(input);
+  }, [input]);
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-4 bg-white rounded-xl shadow">
@@ -59,7 +59,12 @@ export default function TrikaftaChecker() {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter") setSubmittedValue(input); }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            performLookup(input);
+          }
+        }}
         placeholder="Enter CFTR mutation (e.g., F508del)"
         className="w-full p-2 border border-gray-300 rounded mb-4"
       />
@@ -79,7 +84,10 @@ export default function TrikaftaChecker() {
             {suggestions.map((s, i) => (
               <li key={i}>
                 <button
-                  onClick={() => { setInput(s); setSubmittedValue(s); }}
+                  onClick={() => {
+                    setInput(s);
+                    performLookup(s);
+                  }}
                   className="text-blue-600 underline"
                 >
                   {s}
