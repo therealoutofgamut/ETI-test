@@ -58,11 +58,10 @@ export default function TrikaftaChecker() {
       <input
         type="text"
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={(e) => { setInput(e.target.value); performLookup(e.target.value); }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            e.preventDefault();
-            performLookup(input);
+            e.preventDefault(); performLookup(input);
           }
         }}
         placeholder="Enter CFTR mutation (e.g., F508del)"
@@ -85,8 +84,7 @@ export default function TrikaftaChecker() {
               <li key={i}>
                 <button
                   onClick={() => {
-                    setInput(s);
-                    performLookup(s);
+                    setInput(s); performLookup(s);
                   }}
                   className="text-blue-600 underline"
                 >
