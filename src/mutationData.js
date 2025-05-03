@@ -34023,5 +34023,119 @@ export const mutationData = {
     "all_aliases": [
       "\u00a9Copyright 2011 US CF Foundation, Johns Hopkins University, The Hospital for Sick Children."
     ]
+  },
+  "F200L": {
+    "official_name": "F200L",
+    "all_aliases": [
+      "F200L"
+    ]
+  },
+  "I1139V": {
+    "official_name": "I1139V",
+    "all_aliases": [
+      "I1139V"
+    ]
+  },
+  "S1045Y": {
+    "official_name": "S1045Y",
+    "all_aliases": [
+      "S1045Y"
+    ]
+  },
+  "F31del": {
+    "official_name": "F31del",
+    "all_aliases": [
+      "F31del"
+    ]
+  },
+  "I1257": {
+    "official_name": "I1257",
+    "all_aliases": [
+      "I1257"
+    ]
+  },
+  "S108F": {
+    "official_name": "S108F",
+    "all_aliases": [
+      "S108F"
+    ]
+  },
+  "Q129R": {
+    "official_name": "Q129R",
+    "all_aliases": [
+      "Q129R"
+    ]
+  },
+  "F508C;S1251N": {
+    "official_name": "F508C;S1251N",
+    "all_aliases": [
+      "F508C;S1251N"
+    ]
+  },
+  "I148N": {
+    "official_name": "I148N",
+    "all_aliases": [
+      "I148N"
+    ]
+  },
+  "Q1313K": {
+    "official_name": "Q1313K",
+    "all_aliases": [
+      "Q1313K"
+    ]
+  },
+  "I1487": {
+    "official_name": "I1487",
+    "all_aliases": [
+      "I1487"
+    ]
+  },
+  "Q23E": {
+    "official_name": "Q23E",
+    "all_aliases": [
+      "Q23E"
+    ]
+  },
+  "F587I": {
+    "official_name": "F587I",
+    "all_aliases": [
+      "F587I"
+    ]
+  },
+  "I175V": {
+    "official_name": "I175V",
+    "all_aliases": [
+      "I175V"
+    ]
+  },
+  "Q237H": {
+    "official_name": "Q237H",
+    "all_aliases": [
+      "Q237H"
+    ]
+  },
+  "G1047R": {
+    "official_name": "G1047R",
+    "all_aliases": [
+      "G1047R"
+    ]
+  },
+  "I331N": {
+    "official_name": "I331N",
+    "all_aliases": [
+      "I331N"
+    ]
+  },
+  "Q327H": {
+    "official_name": "Q327H",
+    "all_aliases": [
+      "Q327H"
+    ]
+  },
+  "L137P": {
+    "official_name": "L137P",
+    "all_aliases": [
+      "L137P"
+    ]
   }
 };
