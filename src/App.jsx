@@ -14,9 +14,9 @@ const eligibleMutations = new Set([
 
 export default function TrikaftaChecker() {
   const [input, setInput] = useState("");
+  const [submittedValue, setSubmittedValue] = useState("");
   const [result, setResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
-  const [forceSubmit, setForceSubmit] = useState(false);
 
   const handleSubmit = (val) => {
     const cleaned = val.trim().toUpperCase();
@@ -49,11 +49,8 @@ export default function TrikaftaChecker() {
   };
 
   useEffect(() => {
-    if (input || forceSubmit) {
-      handleSubmit(input);
-      setForceSubmit(false);
-    }
-  }, [input, forceSubmit]);
+    if (submittedValue) handleSubmit(submittedValue);
+  }, [submittedValue]);
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-4 bg-white rounded-xl shadow">
@@ -62,7 +59,7 @@ export default function TrikaftaChecker() {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter") setForceSubmit(true); }}
+        onKeyDown={(e) => { if (e.key === "Enter") setSubmittedValue(input); }}
         placeholder="Enter CFTR mutation (e.g., F508del)"
         className="w-full p-2 border border-gray-300 rounded mb-4"
       />
@@ -82,7 +79,7 @@ export default function TrikaftaChecker() {
             {suggestions.map((s, i) => (
               <li key={i}>
                 <button
-                  onClick={() => { setInput(s); handleSubmit(s); }}
+                  onClick={() => { setInput(s); setSubmittedValue(s); }}
                   className="text-blue-600 underline"
                 >
                   {s}
