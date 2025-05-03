@@ -51,8 +51,8 @@ export default function TrikaftaChecker() {
 
       if (matchedKey) {
         const data = mutationData[matchedKey];
-        const isEligible = eligibleMutations.has(normalize(data.official_name)) ||
-          (data.all_aliases || []).some(alias => eligibleMutations.has(normalize(alias)));
+        const aliasesToCheck = [data.official_name, ...(data.all_aliases || [])];
+        const isEligible = aliasesToCheck.some(alias => eligibleMutations.has(normalize(alias)));
         setResult({
           official_name: data.official_name,
           all_aliases: data.all_aliases,
