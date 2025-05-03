@@ -82,7 +82,7 @@ export default function TrikaftaChecker() {
             {suggestions.map((s, i) => (
               <li key={i}>
                 <button
-                  onClick={() => { setInput(s); setForceSubmit(true); }}
+                  onClick={() => { setInput(s); handleSubmit(s); }}
                   className="text-blue-600 underline"
                 >
                   {s}
