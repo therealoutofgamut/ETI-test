@@ -3,10 +3,7 @@ import { mutationData } from "./mutationData.js";
 import { allMutationNames } from "./allMutationNames.js";
 
 export default function TrikaftaChecker() {
-  const [input, setInput] = useState("");
-  const [result, setResult] = useState(null);
-  const [suggestions, setSuggestions] = useState([]);
-  const [forceSubmit, setForceSubmit] = useState(false);
+        const [forceSubmit, setForceSubmit] = useState(false);
 
   const handleSubmit = (val) => {
     const cleaned = val.trim().toUpperCase();
@@ -45,10 +42,7 @@ export default function TrikaftaChecker() {
     }
   }, [input, forceSubmit]);
 
-  const [input, setInput] = useState("");
-  const [result, setResult] = useState(null);
-  const [suggestions, setSuggestions] = useState([]);
-
+      
   useEffect(() => {
     const cleaned = input.trim().toUpperCase();
     const matchedKey = Object.keys(mutationData).find(
