@@ -20,11 +20,14 @@ export default function TrikaftaChecker() {
   const performLookup = (query) => {
     console.log("🔍 Lookup triggered for:", query);
     const cleaned = query.trim().toUpperCase();
-    const matchedKey = Object.keys(mutationData).find(
-    key => {
+    let matchedKey = null;
+    for (const key of Object.keys(mutationData)) {
       const match = key.toUpperCase() === cleaned || mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned);
-      if (match) console.log("✅ Match found for:", key);
-      return match;
+      if (match) {
+        console.log("✅ Match found for:", key);
+        matchedKey = key;
+        break;
+      }
     }
       key =>
         key.toUpperCase() === cleaned ||
