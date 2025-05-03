@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { mutationData } from "./mutationData.js";
 import { allMutationNames } from "./allMutationNames.js";
 
@@ -9,7 +9,7 @@ const eligibleMutations = new Set([
   "K1060T", "K464E", "D110E", "D110H", "D1270N", "D192G", "D443Y", "D579G", "D614G", "D836Y",
   "D979V", "D993Y", "N1303K", "N1303I", "N1088D", "N186K", "N187K", "N418S", "Q1291R", "Q1313K",
   "Q237E", "Q237H", "S1251N", "S549N", "S549R", "S549I", "S737F", "S1159F", "T338I", "T1036N",
-  "T1053I", "T1246I", "V754M", "W1282R", "Y109N", "Y161D", "Y563N", "Q552P", "I980K", "S1255P"
+  "T1053I", "T1246I", "V754M", "W1282R", "Y109N", "Y161D", "Y563N", "Q552P", "I980K", "S1255P", "M952I", "L619S"
 ]);
 
 export default function TrikaftaChecker() {
@@ -18,16 +18,14 @@ export default function TrikaftaChecker() {
   const [suggestions, setSuggestions] = useState([]);
 
   const performLookup = (query) => {
-    console.log("🔍 Lookup triggered for:", query);
     const cleaned = query.trim().toUpperCase();
-
     let matchedKey = null;
+
     for (const key of Object.keys(mutationData)) {
       const match =
         key.toUpperCase() === cleaned ||
         mutationData[key].all_aliases.some(alias => alias.toUpperCase() === cleaned);
       if (match) {
-        console.log("✅ Match found for:", key);
         matchedKey = key;
         break;
       }
@@ -36,29 +34,24 @@ export default function TrikaftaChecker() {
     if (matchedKey) {
       const data = mutationData[matchedKey];
       const isEligible = data.all_aliases.some(alias => eligibleMutations.has(alias));
-      console.log("🎯 Lookup result: Eligible =", isEligible);
       setResult({
         official_name: data.official_name,
         all_aliases: data.all_aliases,
         eligible: isEligible
       });
+      setSuggestions([]);
     } else {
       setResult(null);
-    }
-
-    if (!matchedKey && cleaned.length > 0) {
-      const matches = allMutationNames.filter(name =>
-        name.includes(cleaned)
-      ).slice(0, 5);
-      setSuggestions(matches);
-    } else {
-      setSuggestions([]);
+      if (cleaned.length >= 1) {
+        const matches = allMutationNames.filter(name =>
+          name.includes(cleaned)
+        ).slice(0, 5);
+        setSuggestions(matches);
+      } else {
+        setSuggestions([]);
+      }
     }
   };
-
-  useEffect(() => {
-    performLookup(input);
-  }, [input]);
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-4 bg-white rounded-xl shadow">
@@ -66,10 +59,15 @@ export default function TrikaftaChecker() {
       <input
         type="text"
         value={input}
-        onChange={(e) => { setInput(e.target.value); performLookup(e.target.value); }}
+        onChange={(e) => {
+          const val = e.target.value;
+          setInput(val);
+          performLookup(val);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            e.preventDefault(); performLookup(input);
+            e.preventDefault();
+            performLookup(input);
           }
         }}
         placeholder="Enter CFTR mutation (e.g., F508del)"
@@ -92,7 +90,8 @@ export default function TrikaftaChecker() {
               <li key={i}>
                 <button
                   onClick={() => {
-                    setInput(s); performLookup(s);
+                    setInput(s);
+                    performLookup(s);
                   }}
                   className="text-blue-600 underline"
                 >
