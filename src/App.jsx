@@ -18,8 +18,11 @@ import { saveAs } from "file-saver";
 export default function TrikaftaChecker() {
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem("darkMode");
-    if (stored !== null) return JSON.parse(stored);
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (stored !== null) {
+      return JSON.parse(stored);
+    } else {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
   });
 
   useEffect(() => {
