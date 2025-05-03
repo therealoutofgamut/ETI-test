@@ -27,6 +27,8 @@ export default function TrikaftaChecker() {
     }
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [isDark, setIsDark] = useState(() => {
     const stored = localStorage.getItem("darkMode");
     if (stored !== null) {
@@ -42,6 +44,7 @@ export default function TrikaftaChecker() {
   const normalize = (val) => val.trim().toUpperCase();
 
   const runLookup = (query) => {
+    setLoading(true);
     const cleaned = normalize(query);
     let matchedKey = null;
 
@@ -54,7 +57,7 @@ export default function TrikaftaChecker() {
     }
 
     if (matchedKey) {
-      const data = mutationData[matchedKey];
+      const data = mutationData?.[matchedKey] || { official_name: "-", all_aliases: [] };
       const isEligible = eligibleMutations.has(normalize(data.official_name)) ||
                          data.all_aliases.some(alias => eligibleMutations.has(normalize(alias)));
       const newResult = {
@@ -65,6 +68,7 @@ export default function TrikaftaChecker() {
       setResult(newResult);
       setHistory(prev => [{ query: query.toUpperCase(), ...newResult }, ...prev.slice(0, 4)]);
       setSuggestions([]);
+    setLoading(false);
     } else {
       setResult(null);
       setHistory(prev => [{ query: query.toUpperCase(), official_name: "-", all_aliases: [], eligible: false }, ...prev.slice(0, 4)]);
@@ -72,6 +76,7 @@ export default function TrikaftaChecker() {
         normalize(name).includes(cleaned)
       ).slice(0, 5);
       setSuggestions(matches);
+    setLoading(false);
     }
   };
 
@@ -103,6 +108,22 @@ export default function TrikaftaChecker() {
           {`Toggle ${isDark ? "Light" : "Dark"} Mode`}
         </button>
       </div>
+      
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  margin: 0 auto;
+  height: 32px;
+  width: 32px;
+  border: 4px solid #ddd;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+</style>
+
       <input
         type="text"
         value={input}
@@ -115,7 +136,7 @@ export default function TrikaftaChecker() {
       {result && (
         <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-4">
           <p><strong>Official Name:</strong> {result.official_name}</p>
-          <p><strong>Aliases:</strong> {result.all_aliases.join(", ")}</p>
+          <p><strong>Aliases:</strong> {(result?.all_aliases || []).join(", ")}</p>
           {result.eligible
             ? <p><strong>Eligibility:</strong> ✅ Eligible</p>
             : <>
@@ -130,7 +151,7 @@ export default function TrikaftaChecker() {
         <div className="text-yellow-700 dark:text-yellow-400 mt-4">
           <p className="font-semibold">Did you mean:</p>
           <ul className="list-disc list-inside">
-            {suggestions.map((s, i) => (
+            {(Array.isArray(suggestions) ? suggestions : []).map((s, i) => (
               <li key={i}>
                 <button
                   onClick={() => handleSuggestionClick(s)}
@@ -156,7 +177,7 @@ export default function TrikaftaChecker() {
               </tr>
             </thead>
             <tbody>
-              {history.map((h, i) => (
+              {(Array.isArray(history) ? history : []).map((h, i) => (
                 <tr key={i}>
                   <td className="border px-2 py-1 dark:bg-gray-900">{h.query}</td>
                   <td className="border px-2 py-1 dark:bg-gray-900">{h.official_name}</td>
