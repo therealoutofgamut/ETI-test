@@ -267,8 +267,34 @@ const eligibleMutations = new Set([
 import { useEffect } from "react";
 
 import { allMutationNames } from "./allMutationNames.js";
+import { useState } from "react";
 
 export default function TrikaftaChecker() {
+  const [input, setInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
+  const cleaned = input.trim();
+  const normalized = cleaned.toUpperCase();
+
+  const matchedKey = Object.keys(mutationData).find(
+    key =>
+      key.toUpperCase() === normalized ||
+      mutationData[key].all_aliases.some(alias => alias.toUpperCase() === normalized)
+  );
+
+  const lookup = matchedKey ? mutationData[matchedKey] : null;
+
+  React.useEffect(() => {
+    if (!lookup && cleaned) {
+      const matches = allMutationNames.filter(name =>
+        name.includes(normalized)
+      ).slice(0, 5);
+      setSuggestions(matches);
+    } else {
+      setSuggestions([]);
+    }
+  }, [input]);
+
   const copyText = (text) => {
     navigator.clipboard.writeText(text).then(() => {
       alert("Copied: " + text);
@@ -289,13 +315,6 @@ export default function TrikaftaChecker() {
         mutationData[key].all_aliases.some(alias => alias.toUpperCase() === normalized)
     );
     const lookup = matchedKey ? mutationData[matchedKey] : null;
-
-    let suggestions = [];
-    if (!lookup && cleaned) {
-      const normalized = cleaned.toUpperCase();
-      suggestions = allMutationNames.filter(name => name.includes(normalized)).slice(0, 5);
-    }
-    
     
     if (lookup) {
       const eligible = lookup.all_aliases.some((alias) => eligibleMutations.has(alias));
@@ -341,7 +360,24 @@ export default function TrikaftaChecker() {
               </li>
             ))}
           </ul>
+        {result === null && suggestions.length > 0 && (
+        <div className="text-yellow-700 mt-4">
+          <p className="font-semibold">Did you mean:</p>
+          <ul className="list-disc list-inside">
+            {suggestions.map((s, i) => (
+              <li key={i}>
+                <button
+                  onClick={() => setInput(s)}
+                  className="text-blue-600 underline"
+                >
+                  {s}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
+    </div>
       )}
 
       {result && (
@@ -355,25 +391,46 @@ export default function TrikaftaChecker() {
               <span className="text-red-600 font-semibold">Not Eligible</span>
             )}
           </p>
+        {result === null && suggestions.length > 0 && (
+        <div className="text-yellow-700 mt-4">
+          <p className="font-semibold">Did you mean:</p>
+          <ul className="list-disc list-inside">
+            {suggestions.map((s, i) => (
+              <li key={i}>
+                <button
+                  onClick={() => setInput(s)}
+                  className="text-blue-600 underline"
+                >
+                  {s}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
+    </div>
       )}
 
       {query && !result && suggestions.length === 0 && (
         <p className="text-red-600">Mutation not found in database.</p>
       )}
+    {result === null && suggestions.length > 0 && (
+        <div className="text-yellow-700 mt-4">
+          <p className="font-semibold">Did you mean:</p>
+          <ul className="list-disc list-inside">
+            {suggestions.map((s, i) => (
+              <li key={i}>
+                <button
+                  onClick={() => setInput(s)}
+                  className="text-blue-600 underline"
+                >
+                  {s}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
-
-    {result === null && suggestions.length > 0 && (
-      <div className="text-yellow-600 mt-2">
-        <p className="font-semibold">Did you mean:</p>
-        <ul className="list-disc ml-5">
-          {suggestions.map((s, i) => (
-            <li key={i}>
-              <button onClick={() => setInput(s)} className="text-blue-700 underline">{s}</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
