@@ -13,7 +13,11 @@ const eligibleMutations = new Set([
   "K162E", "L619S", "M952I", "G551A"
 ]);
 
+import { saveAs } from "file-saver";
+
 export default function TrikaftaChecker() {
+  const [history, setHistory] = useState([]);
+
   const [input, setInput] = useState("");
   const [result, setResult] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
@@ -34,8 +38,14 @@ export default function TrikaftaChecker() {
 
     if (matchedKey) {
       const data = mutationData[matchedKey];
-      const isEligible = data.all_aliases.some(alias => eligibleMutations.has(normalize(alias)));
-      setResult({
+      const isEligible = eligibleMutations.has(normalize(data.official_name)) || data.all_aliases.some(alias => eligibleMutations.has(normalize(alias)));
+      const newResult = {
+        official_name: data.official_name,
+        all_aliases: data.all_aliases,
+        eligible: isEligible
+      };
+      setResult(newResult);
+      setHistory(prev => [{ query: query.toUpperCase(), ...newResult }, ...prev.slice(0, 4)]);
         official_name: data.official_name,
         all_aliases: data.all_aliases,
         eligible: isEligible
@@ -43,6 +53,7 @@ export default function TrikaftaChecker() {
       setSuggestions([]);
     } else {
       setResult(null);
+      setHistory(prev => [{ query: query.toUpperCase(), official_name: "-", all_aliases: [], eligible: false }, ...prev.slice(0, 4)]);
       if (cleaned.length >= 1) {
         const matches = allMutationNames.filter(name =>
           normalize(name).includes(cleaned)
@@ -73,9 +84,9 @@ export default function TrikaftaChecker() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-4 bg-white rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">Trikafta Mutation Checker</h1>
-      <input
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 dark:text-white rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <h1 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-6">Trikafta Mutation Checker</h1>
+      <input className="transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400"
         type="text"
         value={input}
         onChange={handleInputChange}
@@ -88,7 +99,13 @@ export default function TrikaftaChecker() {
         <div className="bg-gray-100 p-3 rounded mb-4">
           <p><strong>Official Name:</strong> {result.official_name}</p>
           <p><strong>Aliases:</strong> {result.all_aliases.join(", ")}</p>
-          <p><strong>Eligibility:</strong> {result.eligible ? "✅ Eligible" : "❌ Not eligible"}</p>
+          {result.eligible
+            ? <p><strong>Eligibility:</strong> ✅ Eligible</p>
+            : <>
+                <p><strong>Eligibility:</strong> ❌ Not eligible</p>
+                <p className="text-sm text-gray-600 mt-1">This mutation was found in the database, but is not on the Trikafta eligibility list.</p>
+              </>
+          }
         </div>
       )}
 
@@ -109,6 +126,45 @@ export default function TrikaftaChecker() {
           </ul>
         </div>
       )}
+    
+      {history.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Lookup History</h2>
+          <table className="w-full text-sm border border-gray-300 dark:border-gray-600 shadow-sm rounded">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border px-2 py-1 text-left dark:bg-gray-800">Mutation</th>
+                <th className="border px-2 py-1 text-left dark:bg-gray-800">Official Name</th>
+                <th className="border px-2 py-1 text-left dark:bg-gray-800">Eligibility</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((h, i) => (
+                <tr key={i}>
+                  <td className="border px-2 py-1 dark:bg-gray-900">{h.query}</td>
+                  <td className="border px-2 py-1 dark:bg-gray-900">{h.official_name}</td>
+                  <td className="border px-2 py-1 dark:bg-gray-900">{h.eligible ? "✅" : "❌"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            onClick={() => {
+              const csvContent = "data:text/csv;charset=utf-8," +
+                "Mutation,Official Name,Eligibility\n" +
+                history.map(h =>
+                  [h.query, h.official_name, h.eligible ? "Eligible" : "Not eligible"].join(",")
+                ).join("\n");
+              const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+              saveAs(blob, "trikafta_lookup_history.csv");
+            }}
+            className="mt-2 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Export History as CSV
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
