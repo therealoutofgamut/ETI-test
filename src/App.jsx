@@ -266,6 +266,8 @@ const eligibleMutations = new Set([
 
 import { useEffect } from "react";
 
+import { allMutationNames } from "./allMutationNames.js";
+
 export default function TrikaftaChecker() {
   const copyText = (text) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -279,7 +281,22 @@ export default function TrikaftaChecker() {
 
   const handleSearch = (input) => {
     const cleaned = input.trim();
-    const lookup = mutationData[cleaned];
+    
+    const normalized = cleaned.toUpperCase();
+    const matchedKey = Object.keys(mutationData).find(
+      key =>
+        key.toUpperCase() === normalized ||
+        mutationData[key].all_aliases.some(alias => alias.toUpperCase() === normalized)
+    );
+    const lookup = matchedKey ? mutationData[matchedKey] : null;
+
+    let suggestions = [];
+    if (!lookup && cleaned) {
+      const normalized = cleaned.toUpperCase();
+      suggestions = allMutationNames.filter(name => name.includes(normalized)).slice(0, 5);
+    }
+    
+    
     if (lookup) {
       const eligible = lookup.all_aliases.some((alias) => eligibleMutations.has(alias));
       setResult({ ...lookup, eligible });
@@ -347,3 +364,16 @@ export default function TrikaftaChecker() {
     </div>
   );
 }
+
+    {result === null && suggestions.length > 0 && (
+      <div className="text-yellow-600 mt-2">
+        <p className="font-semibold">Did you mean:</p>
+        <ul className="list-disc ml-5">
+          {suggestions.map((s, i) => (
+            <li key={i}>
+              <button onClick={() => setInput(s)} className="text-blue-700 underline">{s}</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
