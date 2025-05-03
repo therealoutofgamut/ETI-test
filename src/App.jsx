@@ -1,55 +1,6 @@
 
 import React, { useState } from "react";
-
-const mutationData = {
-  "c.1521_1523del|1653delCTT": {
-    official_name: "F508del",
-    all_aliases: ["F508del", "c.1521_1523del", "c.1521_1523del|1653delCTT", "p.Phe508del"]
-  },
-  "c.1521_1523del": {
-    official_name: "F508del;I1027T",
-    all_aliases: [
-      "3080T>C",
-      "F508del",
-      "F508del in cis with I1027T|1653delCTT with 3212T>C",
-      "F508del;I1027T",
-      "I1027T",
-      "Ile1027Thr",
-      "c.1521_1523del",
-      "p.Phe508del"
-    ]
-  },
-  "F508del": {
-    official_name: "F508del;I1027T",
-    all_aliases: [
-      "3080T>C",
-      "F508del",
-      "F508del in cis with I1027T|1653delCTT with 3212T>C",
-      "F508del;I1027T",
-      "I1027T",
-      "Ile1027Thr",
-      "c.1521_1523del",
-      "p.Phe508del"
-    ]
-  },
-  "p.Phe508del": {
-    official_name: "F508del;I1027T",
-    all_aliases: [
-      "3080T>C",
-      "F508del",
-      "F508del in cis with I1027T|1653delCTT with 3212T>C",
-      "F508del;I1027T",
-      "I1027T",
-      "Ile1027Thr",
-      "c.1521_1523del",
-      "p.Phe508del"
-    ]
-  },
-  "G542X": {
-    official_name: "G542X",
-    all_aliases: ["1756G>T", "G542X", "c.1624G>T", "p.Gly542X"]
-  }
-};
+import { mutationData } from "./mutationData";
 
 const eligibleMutations = new Set([
   "D1152H", "L206W", "R1066H", "S945L", "F508del", "L997F", "R117C", "T338I", "G85E",
@@ -57,7 +8,7 @@ const eligibleMutations = new Set([
   "I1139V", "P574H", "S1045Y", "F31del", "I1257", "P67L", "S108F", "F311L", "I1269N",
   "P750L", "S1118F", "F508C", "I1366N", "Q129R", "S1159P", "F508C;S1251N", "I148N",
   "Q1313K", "F575Y", "I1487", "Q23E", "S1235R", "F587I", "I175V", "Q237H", "S1251N",
-  "G1047R", "I331N", "Q359R", "S1255P", "G1061R", "I336K", "Q327H", "S13F", "G542X"
+  "G1047R", "I331N", "Q359R", "S1255P", "G1061R", "I336K", "Q327H", "S13F", "G542X", "R553X"
 ]);
 
 export default function TrikaftaChecker() {
