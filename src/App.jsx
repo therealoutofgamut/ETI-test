@@ -100,7 +100,7 @@ export default function TrikaftaChecker() {
       <h1 className={`text-3xl font-bold text-center ${isDark ? "text-blue-300" : "text-blue-700"} mb-6`}>Trikafta Mutation Checker</h1>
         <div className="text-right mb-2">
           <button onClick={() => setIsDark(!isDark)} className="text-sm px-3 py-1 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600">
-            Toggle {isDark ? "Light" : "Dark"} Mode
+            {`Toggle ${isDark ? "Light" : "Dark"} Mode`}
           </button>
         </div>
       <input className={`transition ${isDark ? "bg-gray-800 border-gray-600 placeholder-gray-400 text-white" : ""}`} focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400"
